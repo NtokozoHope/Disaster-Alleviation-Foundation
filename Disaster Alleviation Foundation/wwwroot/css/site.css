@@ -1,0 +1,29 @@
+:root {
+    --primary-color: #FFA500; /* Orange */
+    --secondary-color: #800080; /* Purple */
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-color); /* Use the primary color here */
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color)); /* Create a gradient background */
+    color: white; /* Set text color to white for contrast */
+}
