@@ -221,7 +221,7 @@ namespace Disaster_Alleviation_Foundation.Controllers
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
 
-            string query = "INSERT INTO Allocation (Allocation, GoodsCategory ) VALUES (@Allocation, @GoodsCategory )";
+            string query = "INSERT INTO MoneyAllocations (Allocation ) VALUES (@Allocation )";
             cmd = new SqlCommand(query, conn);
 
             cmd.Parameters.AddWithValue("@Allocation", allocations.Amount);
@@ -233,7 +233,7 @@ namespace Disaster_Alleviation_Foundation.Controllers
         }
 
         [HttpGet]
-        public IActionResult GoodsAllocation()
+        public IActionResult AllocateGoods()
         {
             return View();
         }
@@ -243,6 +243,8 @@ namespace Disaster_Alleviation_Foundation.Controllers
         {
             return View();
         }
+
+        [HttpPost]
         public ActionResult AllocateGoods(GoodsAllocation goods)
             {
                 if (ModelState.IsValid)
@@ -251,12 +253,12 @@ namespace Disaster_Alleviation_Foundation.Controllers
                         {
                             conn.Open();
 
-                            string sql = "INSERT INTO GoodsAllocations (GoodsDescription, Quantity) " +
-                                         "VALUES (@GoodsDescription, @Quantity)";
+                            string sql = "INSERT INTO GoodsAllocations (Description, Quantity) " +
+                                         "VALUES (@Description, @Quantity)";
 
                             using (SqlCommand cmd = new SqlCommand(sql, conn))
                             {
-                                cmd.Parameters.AddWithValue("@GoodsDescription", goods.Description);
+                                cmd.Parameters.AddWithValue("@Description", goods.Description);
                                 cmd.Parameters.AddWithValue("@Quantity", goods.Quantity);
 
                                 cmd.ExecuteNonQuery();
@@ -305,18 +307,20 @@ namespace Disaster_Alleviation_Foundation.Controllers
 
             return View("AllocationSuccess0");
 
+            decimal CulAvaMoney()
+            {
+                decimal AvaMoney = 10000;
+
+
+                return AvaMoney;
+            }
+
         }
 
         private void UpdateAvaMoney(decimal newMoney)
         {
 
         }
-        decimal CulAvaMoney()
-        {
-            decimal AvaMoney = 10000;
-
-
-            return AvaMoney;
-        }
+        
     }
 }
