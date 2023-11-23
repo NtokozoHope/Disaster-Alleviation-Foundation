@@ -29,5 +29,11 @@ namespace Disaster_Alleviation_Foundation.Models
 
         [Display(Name = "Aid Type")]
         public string AidType { get; set; }
+
+        [Display(Name = "Is the disaster active")]
+        public bool IsDisaster { get; set; }
+
+        public ICollection<MoneyAllocations> MoneyAllocations { get; set; }
+        public ICollection<GoodsAllocation> GoodsAllocation { get; set; }
     }
 }

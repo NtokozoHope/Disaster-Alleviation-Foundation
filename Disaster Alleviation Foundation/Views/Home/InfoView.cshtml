@@ -1,0 +1,24 @@
+﻿@model Disaster_Alleviation_Foundation.Controllers.Information
+@{
+    ViewData["Title"] = "Public Information";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>monetary donations received: $@Model.TotalMonetary</p>
+
+<p>number of goods received: @Model.TotalGoods items</p>
+
+<h2>Currently Active Disasters</h2>
+@foreach (var disaster in Model.IsDisaster)
+{
+    <div>
+        <h3>@disaster.Description</h3>
+
+        <p>Start date: @disaster.StartDate</p>
+        <p>Location: @disaster.Location</p>
+
+        <p>Aid: @disaster.AidType</p>
+
+    </div>
+}

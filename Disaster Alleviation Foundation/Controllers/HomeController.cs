@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using NuGet.Packaging.Signing;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 
 namespace Disaster_Alleviation_Foundation.Controllers
 {
@@ -164,13 +165,14 @@ namespace Disaster_Alleviation_Foundation.Controllers
             SqlCommand cmd;
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
-            string query = "INSERT INTO Disasters (StartDate, EndDate, Location, Description, AidType) VALUES (@StartDate, @EndDate, @Location, @Description, @AidType)";
+            string query = "INSERT INTO Disaster (StartDate, EndDate, Location, Description, AidType, IsDisaster) VALUES (@StartDate, @EndDate, @Location, @Description, @AidType, @IsDisaster)";
             cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@StartDate", disaster.StartDate);
             cmd.Parameters.AddWithValue("@EndDate", disaster.EndDate);
             cmd.Parameters.AddWithValue("@Location", disaster.Location);
             cmd.Parameters.AddWithValue("@Description", disaster.Description);
             cmd.Parameters.AddWithValue("@AidType", disaster.AidType);
+            cmd.Parameters.AddWithValue("@IsDisaster", disaster.IsDisaster);
             cmd.ExecuteNonQuery();
             conn.Close();
 
@@ -181,7 +183,7 @@ namespace Disaster_Alleviation_Foundation.Controllers
         [HttpGet]
         public IActionResult DisasterList()
         {
-            var Disaster = _context.Disasters.ToList();
+            var Disaster = _context.Disaster.ToList();
             return View(Disaster);
         }
 
@@ -221,10 +223,10 @@ namespace Disaster_Alleviation_Foundation.Controllers
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
 
-            string query = "INSERT INTO MoneyAllocations (Allocation ) VALUES (@Allocation )";
+            string query = "INSERT INTO MoneyAllocations (Amount ) VALUES (@Amount )";
             cmd = new SqlCommand(query, conn);
 
-            cmd.Parameters.AddWithValue("@Allocation", allocations.Amount);
+            cmd.Parameters.AddWithValue("@Amount", allocations.Amount);
 
             cmd.ExecuteNonQuery();
             conn.Close();
@@ -253,7 +255,7 @@ namespace Disaster_Alleviation_Foundation.Controllers
                         {
                             conn.Open();
 
-                            string sql = "INSERT INTO GoodsAllocations (Description, Quantity) " +
+                            string sql = "INSERT INTO GoodsAllocation (Description, Quantity) " +
                                          "VALUES (@Description, @Quantity)";
 
                             using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -301,11 +303,11 @@ namespace Disaster_Alleviation_Foundation.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            UpdateAvaMoney(avaMoney - capturePurchase.Category);
-            decimal update = avaMoney- capturePurchase.Category;
+            UpdateAvaMoney(avaMoney - capturePurchase.Amount);
+            decimal update = avaMoney- capturePurchase.Amount;
             ViewBag.UpdateAvaMoney = update;
 
-            return View("AllocationSuccess0");
+            return View("Index");
 
             decimal CulAvaMoney()
             {
@@ -321,6 +323,23 @@ namespace Disaster_Alleviation_Foundation.Controllers
         {
 
         }
-        
+
+        public async Task<IActionResult> InfoView()
+        {
+            var model = new Information();
+
+            decimal totalMonetaryDonations = await _context.MonetaryDonation.SumAsync(d => d.Amount);
+            model.TotalMonetary = (int)totalMonetaryDonations; 
+
+            
+            model.TotalGoods = await _context.GoodsAllocation.SumAsync(d => d.Quantity);
+
+            model.IsDisaster = await _context.Disaster
+                    .Where(d => d.IsDisaster)
+                    .ToListAsync();
+
+            return View(model);
+        }
+
     }
 }
